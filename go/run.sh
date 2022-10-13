@@ -13,19 +13,19 @@ signal_handler()
 }
 trap signal_handler SIGINT
 
-go run main.go > output1.log 2>&1 &
+go run main.go >> output.log 2>&1 &
 PIDS[0]=$!
 echo "Process ${PIDS[0]} started."
 
-go run main2.go > output2.log 2>&1 &
+go run main2.go >> output.log 2>&1 &
 PIDS[1]=$!
 echo "Process ${PIDS[1]} started."
 
-go run main3.go > output3.log 2>&1 &
+go run main3.go >> output.log 2>&1 &
 PIDS[2]=$!
 echo "Process ${PIDS[2]} started."
 
-go run main4.go > output4.log 2>&1 &
+go run main4.go >> output.log 2>&1 &
 PIDS[3]=$!
 echo "Process ${PIDS[3]} started."
 

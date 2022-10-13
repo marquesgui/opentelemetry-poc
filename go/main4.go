@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	log.Println("Starting app...")
+	log.Println("Main4: Starting app...")
 	nc, err := nats.Connect("nats://192.168.64.6:4222")
 	if err != nil {
 		log.Fatal(err)

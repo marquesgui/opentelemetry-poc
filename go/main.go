@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/nats-io/nats.go"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -38,7 +40,7 @@ func initProvider() (func(context.Context) error, error) {
 	// probably connect directly to the service through dns
 	ctx, cancel := context.WithTimeout(ctx, time.Second)
 	defer cancel()
-	conn, err := grpc.DialContext(ctx, "localhost:30080", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	conn, err := grpc.DialContext(ctx, "192.168.64.7:30080", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create gRPC connection to collector: %w", err)
 	}
@@ -85,6 +87,11 @@ func main() {
 		Timestamp string `json:"date"`
 	}
 
+	tracer := otel.Tracer("test-tracer")
+
+	commonAttrs := []attribute.KeyValue{}
+
+	ctx, span := tracer.Start(ctx, "CollectorExport-Example", trace.WithAttributes())
 	go func() {
 		if _, err := ec.Subscribe("telemetry-poc.start", func(m *msg) {
 			log.Printf("Runner1 | Text: %s, Timestamp: %s", m.Text, m.Timestamp)
